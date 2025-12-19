@@ -1,10 +1,10 @@
 const db = require('../../../models');
 const JWT = require('jsonwebtoken');
 const getMessages = require('../../../utils/getMessages');
+const { Op } = require('sequelize');
 
 exports.invitedList = async (req, res) => {
   try {
-
     if (!req.headers.authorization) {
       return res.status(401).json({ message: getMessages('UNAUTHORIZED') });
     }
@@ -12,35 +12,56 @@ exports.invitedList = async (req, res) => {
     const token = req.headers.authorization.split(' ')[1];
     const decoded = JWT.verify(token, process.env.JWT_SECRET);
 
-    const userId = decoded.userId;
+    const skip = Number(req.query.skip ?? 0);
+    const limit = Number(req.query.limit ?? 10);
+    const { search, startDate, endDate } = req.query;
 
-    const { params: { skip = 0, limit = 10 } } = req;
+    const invitationWhere = {
+      invitee_email: decoded.email
+    };
 
-    const events = await db.Event.findAll({
-      where: { creator_id: userId }
-    });
+    if (search) {
+      invitationWhere.event_name = {
+        [Op.iLike]: `%${search}%` 
+      };
+    }
+
+    const eventWhere = {};
+
+    if (startDate && endDate) {
+      eventWhere.date = {
+        [Op.between]: [startDate, endDate]
+      };
+    } else if (startDate) {
+      eventWhere.date = {
+        [Op.gte]: startDate
+      };
+    } else if (endDate) {
+      eventWhere.date = {
+        [Op.lte]: endDate
+      };
+    }
 
     const invitations = await db.Invitation.findAll({
-      where: { invitee_email: decoded.email },
+      where: invitationWhere,
       attributes: ['event_name'],
       include: [
         {
-          model: db.User,
-          as: 'Inviter',
-          attributes: ['name', 'email']
+          model: db.Event,
+          as: 'event',
+          where: eventWhere,
+          attributes: ['id', 'title', 'date']
         }
       ],
+      order: [['event_name', 'ASC']],
       limit,
-      skip
+      offset: skip
     });
 
-    return res.status(200).json({
-      events,
-      invitations
-    });
+    return res.status(200).json({ invitations });
 
   } catch (error) {
-    console.error('Error fetching events and invitations:', error);
+    console.error('Error fetching invitations:', error);
     return res.status(500).json({ message: getMessages('SERVER_ERROR') });
   }
 };
