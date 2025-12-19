@@ -7,8 +7,11 @@ const {resetPassword} = require('./authController/passwordController/resetPasswo
 const {updatePassword} = require('./authController/passwordController/updatePassword');
 
 const {createEvent}=require('./eventController/createEvent');
+const {eventInvite}=require('./eventController/eventInvite')
 const {myEventList}=require('./eventController/list/myEventList');
 const {invitedList}=require('./eventController/list/invitedList');
+const {eventDetails}=require('./eventController/eventDetails');
+const {updateEvent}=require('./eventController/updateEvent');
 
 const authController = {
     register,
@@ -24,8 +27,11 @@ const passwordController = {
 
 const eventController = {
     createEvent,
+    eventInvite,
     myEventList,
-    invitedList
+    invitedList,
+    eventDetails,
+    updateEvent
 };
 
 module.exports = {

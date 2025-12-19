@@ -27,7 +27,7 @@ exports.register = async (req, res) => {
     });
 
   } catch (err) {
-    console.error("Register error:", err); // 🔥 IMPORTANT for debugging
-    return res.status(500).json({ message: "Server error" });
+    console.error("Register error:", err); 
+    return res.status(500).json({ message: err.message });
   }
 };

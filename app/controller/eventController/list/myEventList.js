@@ -2,14 +2,16 @@ const db = require('../../../models');
 const JWt = require('jsonwebtoken');
 const getMessages = require('../../../utils/getMessages');
 const { Op } = require('sequelize');
+const { use } = require('../../../routes/auth.routes');
 
 exports.myEventList = async (req, res) => {
     try {
         const skip = parseInt(req.query.skip) || 0;
         const limit = parseInt(req.query.limit) || 5;
-
+        if (!req.headers.authorization) {
+            return res.status(401).json({ message: getMessages('UNAUTHORIZED') });
+        }
         const token = req.headers.authorization.split(' ')[1];
-
 
         const decoded = JWt.verify(token, process.env.JWT_SECRET);
         const userId = decoded.userId;
@@ -17,10 +19,11 @@ exports.myEventList = async (req, res) => {
             return res.status(401).json({ message: getMessages('UNAUTHORIZED') });
         }
 
-        const { startDate, endDate } = req.query;
+        const { startDate, endDate, search } = req.query;
+
 
         const whereCondition = {
-            creator_id: req.user.userId
+            creator_id: userId
         };
 
         if (startDate && endDate) {
@@ -50,6 +53,7 @@ exports.myEventList = async (req, res) => {
                 {
                     model: db.Invitation,
                     as: 'invitations',
+                    required: false,
                     include: [
                         {
                             model: db.User,
@@ -61,7 +65,6 @@ exports.myEventList = async (req, res) => {
             offset: skip,
         });
 
-        console.log(skip)
         return res.status(200).json({ events });
 
     }

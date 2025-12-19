@@ -15,14 +15,13 @@ Event.init(
 	title:{
         type: DataTypes.STRING,
         allowNull: false,
-        unique: true
     },
 	description:{
         type: DataTypes.STRING,
         allowNull: false,
     },
     date:{
-        type: DataTypes.DATE,
+        type: DataTypes.DATEONLY,
         allowNull: false
     },
 	creator_id:{

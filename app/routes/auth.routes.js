@@ -13,8 +13,12 @@ router.post('/reset-password', passwordAuth.resetPassword);
 router.post('/update-password', passwordAuth.updatePassword);
 
 router.post('/create-event', eventAuth.createEvent);
+router.post("/eventInvite", eventAuth.eventInvite);
 router.get('/my-events', eventAuth.myEventList);
 router.get('/invited-events', eventAuth.invitedList);
+
+router.get("/event-details", eventAuth.eventDetails)
+router.put("/update-details", eventAuth.updateEvent)
 
 
 module.exports = router;

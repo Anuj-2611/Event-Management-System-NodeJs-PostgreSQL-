@@ -20,11 +20,20 @@ User.init(
 	email:{
         type: DataTypes.STRING,
         allowNull: false,
-        unique: true
+        unique: true,
+        validate: {
+        isEmail: {
+            msg: 'Please provide a valid email address'
+        }
+    }
     },
 	password:{
         type: DataTypes.STRING,
         allowNull: false
+    },
+    isRegistered:{
+        defaultValue: false,
+        type: DataTypes.BOOLEAN
     }
     },
     {

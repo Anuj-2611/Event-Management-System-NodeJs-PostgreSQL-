@@ -31,11 +31,13 @@ db.Invitation.belongsTo(db.Event, {
 db.User.hasMany(db.Invitation, {
   foreignKey: 'invitee_email',
   sourceKey: 'email',
+  constraints: false,
   as: 'invitations'
 });
 db.Invitation.belongsTo(db.User, {
   foreignKey: 'invitee_email',
   targetKey: 'email',
+  constraints: false,
   as: 'invitee'
 });
 

@@ -22,7 +22,7 @@ exports.invitedList = async (req, res) => {
 
     if (search) {
       invitationWhere.event_name = {
-        [Op.iLike]: `%${search}%` 
+        [Op.iLike]: `%${search}%`
       };
     }
 
@@ -49,6 +49,7 @@ exports.invitedList = async (req, res) => {
         {
           model: db.Event,
           as: 'event',
+          required: "false",
           where: eventWhere,
           attributes: ['id', 'title', 'date']
         }

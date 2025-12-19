@@ -19,12 +19,6 @@ exports.createEvent = async (req, res) => {
         creator_id: creatorId
     });
 
-    const event = await db.Event.findOne({ where: { title } });
-
-    if(event) {
-        return res.status(400).json({ message: getMessage('EVENT_ALREADY_EXISTS') });
-    }
-
     const invites = req.body.invitees || [];
     for (const inviteeEmail of invites) {
         await db.Invitation.create({
